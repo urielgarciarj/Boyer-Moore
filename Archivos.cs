@@ -185,7 +185,6 @@ namespace BoyerMoore_csharp
             int n = texto.Length; //Tamaño de la cadena
             int[] badChar = new int[256];
             TablaSiguiente(myString, m, ref badChar);
-
             int s = 0;
             while (s <= (n - m))
             {
@@ -194,8 +193,10 @@ namespace BoyerMoore_csharp
                 
                     --j;
                     if(j < 0)
-                    {
-                        remarcado(s, s+n);
+                    {    
+                        //Archivos archivos = new Archivos();
+                        MessageBox.Show("Palabra encontrada");
+                        //archivos.remarcado(0,  9);
                         retVal.Add(s);
                         s+= (s + m < n) ? m - badChar[texto[s + m]] : 1;
                     }
@@ -203,7 +204,6 @@ namespace BoyerMoore_csharp
                     {
                         s += Math.Max(1, j - badChar[texto[s + j]]);
                     }
-                
             }
             return retVal.ToArray();
         }
@@ -219,12 +219,12 @@ namespace BoyerMoore_csharp
                 badChar[(int)str[i]] = i;
         }
 
-        public static void remarcado(int inicio, int tamanio)
+        public  void remarcado(int inicio, int tamanio)
         {
-            RichTextBox richTextBox = new RichTextBox();
-            richTextBox.Select(inicio, tamanio);
-            richTextBox.SelectionColor = Color.Red;
-            richTextBox.Refresh();
+            this.richTextBox.Text = GlobalData.textString;
+            this.richTextBox.Select(inicio, tamanio);
+            this.richTextBox.SelectionColor = Color.Red;
+            //this.richTextBox.Refresh();
         }
 
 
@@ -232,8 +232,16 @@ namespace BoyerMoore_csharp
         {
             if(e.KeyData == Keys.Enter)
             {
-                string myString = txtSearch.Text;
-                BoyerMoore(GlobalData.textString , myString);
+                if (cbSensible.Checked)
+                {
+                    string myString = txtSearch.Text;
+                    BoyerMoore(GlobalData.textString.ToUpper(), myString.ToUpper());
+                }
+                else
+                {
+                    string myString = txtSearch.Text;
+                    BoyerMoore(GlobalData.textString, myString);
+                }
             }
         }
 
