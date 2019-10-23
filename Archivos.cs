@@ -130,11 +130,10 @@ namespace BoyerMoore_csharp
             btnSaveAs.Hide();
         }
 
-        public int BoyerMoore(string myString)
+        /*public int BoyerMoore(string myString)
         {
             GlobalData.patternString = myString;
             GlobalData.pattern = myString.Length;
-
             GlobalData.text = GlobalData.textString.Length;
 
             int charcount = 0;
@@ -159,29 +158,82 @@ namespace BoyerMoore_csharp
                 else
                 {
                     a = GlobalData.textString[k - (GlobalData.pattern - j - 1)].ToString();
-                    k = k + (GlobalData.pattern-1 - myString.IndexOf(a));
-                    j = GlobalData.pattern-1;
+                    k = k + (GlobalData.pattern - 1 - myString.IndexOf(a));
+                    j = GlobalData.pattern - 1;
+                }
+                if (j == 0)
+                {
+                    MessageBox.Show("La palabra se encuentra en el archivo");
+                    MessageBox.Show(k.ToString());
+                    if (k != GlobalData.textString.Length)
+                    {
+                        j = GlobalData.pattern - 1;
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("La palabra no se encuentra en el archivo");
                 }
             }
-
-            if (j == 0)
-            {
-                MessageBox.Show("La palabra se encuentra en el archivo");
-            }
-            else
-            {
-                MessageBox.Show("La palabra no se encuentra en el archivo");
-            }
-
             return k;
+        }*/
+
+        public static int[] BoyerMoore(string texto, string myString)
+        {
+            List<int> retVal = new List<int>();
+            int m = myString.Length; //Tamaño de todo el texto del archivo
+            int n = texto.Length; //Tamaño de la cadena
+            int[] badChar = new int[256];
+            TablaSiguiente(myString, m, ref badChar);
+
+            int s = 0;
+            while (s <= (n - m))
+            {
+                int j = m - 1;
+                while (j >= 0 && myString[j] == texto[s + j])
+                
+                    --j;
+                    if(j < 0)
+                    {
+                        remarcado(s, s+n);
+                        retVal.Add(s);
+                        s+= (s + m < n) ? m - badChar[texto[s + m]] : 1;
+                    }
+                    else
+                    {
+                        s += Math.Max(1, j - badChar[texto[s + j]]);
+                    }
+                
+            }
+            return retVal.ToArray();
         }
+
+        private static void TablaSiguiente(string str, int size, ref int[] badChar)
+        {
+            int i;
+
+            for (i = 0; i < 256; i++)
+                badChar[i] = -1;
+
+            for (i = 0; i < size; i++)
+                badChar[(int)str[i]] = i;
+        }
+
+        public static void remarcado(int inicio, int tamanio)
+        {
+            RichTextBox richTextBox = new RichTextBox();
+            richTextBox.Select(inicio, tamanio);
+            richTextBox.SelectionColor = Color.Red;
+            richTextBox.Refresh();
+        }
+
 
         private void txtSearch_KeyDown(object sender, KeyEventArgs e)
         {
             if(e.KeyData == Keys.Enter)
             {
                 string myString = txtSearch.Text;
-                BoyerMoore(myString);
+                BoyerMoore(GlobalData.textString , myString);
             }
         }
 
